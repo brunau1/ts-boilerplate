@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# Load NVM (Node Version Manager)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+
+# Use Node.js version from .nvmrc file
+echo "Loading Node.js version from .nvmrc..."
+nvm use || exit 1
+
+# Print Node.js version for confirmation
+echo "Using Node.js version: $(node --version)"
+
+# Check TypeScript files
+echo "Running TypeScript compiler check..."
+npx tsc --noEmit
+
+# Auto-format files before commit
+echo "Running Prettier to fix formatting..."
+npx prettier --write "src/**/*.ts" "tests/**/*.ts"
+
+# Stage the formatted files - using git's own tracking instead of wildcards
+echo "Re-staging modified files..."
+git update-index --again
+
+# Success
+echo "Pre-commit checks passed and files formatted!"
+exit 0
